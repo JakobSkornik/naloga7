@@ -71,7 +71,7 @@ class Struct {
 
     public int uredi() {
 
-        //for zanka cez vrednosti pregleda podatke o otrokih in vse, ki otroke imajo doloci kot njihove starse
+        //for zanka cez vrednosti pregleda podatke o otrokih in vse, ki otroke imajo, doloci kot njihove starse
 
         for (int i = 1; i <= size; i++) {
 
