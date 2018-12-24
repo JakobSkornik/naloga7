@@ -5,17 +5,19 @@ import java.util.*;
 
 class Struct {
 
-    public HashMap <Integer, Node> Map_id;
-    public HashMap <Integer, Node> Map_v;
-    public int size;
-    public Q last;
+    //struktura dveh hashmap, in vrste za izpis po nivojih
+
+    private HashMap <Integer, Node> Map_id;
+    private HashMap <Integer, Node> Map_v;
+    private int size;
+    private Q last;
 
     class Node {
 
-        int id;
-        int v;
-        int id_l;
-        int id_r;
+        final int id;
+        final int v;
+        final int id_l;
+        final int id_r;
         int id_p;
         int x;
         int y;
@@ -31,7 +33,7 @@ class Struct {
 
     class Q {
 
-        Node s;
+        final Node s;
         Q next;
 
         Q(Node s, Q next) {
@@ -50,6 +52,8 @@ class Struct {
 
     public void vnesi(String data) {
 
+        //format podatkov: id, vrednost, id levega otroka, id desnega otroka
+
         String[] s = data.split(",");
 
         int a = Integer.parseInt(s[0]);
@@ -59,11 +63,15 @@ class Struct {
 
         Node n = new Node (a, b, c ,d);
 
+        //id in vrednost sta enolicna identifikatorja, v je od 1 do N, uporaben za for zanke
+
         Map_id.put (a, n);
         Map_v.put (b, n);
     }
 
     public int uredi() {
+
+        //for zanka cez vrednosti pregleda podatke o otrokih in vse, ki otroke imajo doloci kot njihove starse
 
         for (int i = 1; i <= size; i++) {
 
@@ -82,6 +90,8 @@ class Struct {
             }
         }
 
+        //tukaj funkcija vrne root drevesa
+
         for (int j = 1; j <= size; j++) {
 
             Node n  = Map_v.get(j);
@@ -93,17 +103,15 @@ class Struct {
         return -1;
     }
 
-    public void izpisi () {
+    public void dodeli_koordinate (int root, int tip) {
 
-        for (int i = 1; i <= size; i++) {
-
-            Node n = Map_v.get(i);
-
-            System.out.printf("ID: %d, V: %d, ID_L: %d, ID_R: %d, ID_P: %d\n\n", n.id, n.v, n.id_l, n.id_r, n.id_p);
-        }
-    }
-
-    public void dodeli_koordinate (int root, PrintWriter izhod, int tip) { //0...root, 1...levi child, 2...desni child
+        //ta funkcija zacne pri rootu in sledi formuli za izracun x lokacije
+        //y lokacijo dobim iz y lokacije starsa (+1, root ima 0)
+        //root ima x lokacijo enako stevilu levih otrok
+        //levi otrok ima x lokacijo enako (x_oceta - velikost_desnega_poddrevesa - 1)
+        //desni otrok ima x lokacijo enako (x_oceta + velikost_levega_poddrevesa + 1)
+        //switch za dolocitev formule
+        //0...root, 1...levi child, 2...desni child
 
         if (root != -1) {
 
@@ -114,10 +122,9 @@ class Struct {
                     Node n = Map_id.get(root);
                     n.y = 0;
                     n.x = power(n.id_l);
-                    //izhod.printf("%d,%d,%d\n", n.v, n.x, n.y);
 
-                    dodeli_koordinate(n.id_l, izhod, 1);
-                    dodeli_koordinate(n.id_r, izhod, 2);
+                    dodeli_koordinate(n.id_l, 1);
+                    dodeli_koordinate(n.id_r, 2);
                     break;
 
                 case 1:
@@ -129,10 +136,9 @@ class Struct {
 
                     m.y = parent.y + 1;
                     m.x = parent.x - power(r_child) - 1;
-                    //izhod.printf("%d,%d,%d\n", m.v, m.x, m.y);
 
-                    dodeli_koordinate(m.id_l, izhod, 1);
-                    dodeli_koordinate(m.id_r, izhod, 2);
+                    dodeli_koordinate(m.id_l, 1);
+                    dodeli_koordinate(m.id_r, 2);
                     break;
 
                 case 2:
@@ -143,16 +149,17 @@ class Struct {
 
                     b.y = paren.y + 1;
                     b.x = paren.x + power(l_child) + 1;
-                    //izhod.printf("%d,%d,%d\n", b.v, b.x, b.y);
 
-                    dodeli_koordinate(b.id_l, izhod, 1);
-                    dodeli_koordinate(b.id_r, izhod, 2);
+                    dodeli_koordinate(b.id_l, 1);
+                    dodeli_koordinate(b.id_r, 2);
                     break;
             }
         }
     }
 
-    public int power (int id) {
+    private int power (int id) {
+
+        //rekurzivna formula za izracun velikosti poddrevesa
 
         if (id == -1)
             return 0;
@@ -169,6 +176,8 @@ class Struct {
 
     public void writer (PrintWriter izhod, int root) {
 
+        //izpis po nivojih s pomocjo vrste
+
         Q queue = new Q (Map_id.get(root), null);
         last = queue;
 
@@ -181,7 +190,7 @@ class Struct {
         }
     }
 
-    public void add_2_q (int id){
+    private void add_2_q (int id){
 
         if (id != -1) {
 
@@ -220,7 +229,7 @@ public class Naloga7 {
                 struct.vnesi(vhod.readLine());
 
             int root = struct.uredi();
-            struct.dodeli_koordinate(root, izhod, 0);
+            struct.dodeli_koordinate(root, 0);
             struct.writer(izhod, root);
 
             final long et = System.currentTimeMillis();
