@@ -1,7 +1,6 @@
 import java.io.*;
 import java.util.*;
 
-
 //java Naloga7 C:\Users\User\Desktop\test.txt C:\Users\User\Desktop\out.txt
 
 class Struct {
@@ -9,7 +8,7 @@ class Struct {
     public HashMap <Integer, Node> Map_id;
     public HashMap <Integer, Node> Map_v;
     public int size;
-    public
+    public Q last;
 
     class Node {
 
@@ -27,6 +26,18 @@ class Struct {
             this.v = v;
             this.id_l = id_l;
             this.id_r = id_r;
+        }
+    }
+
+    class Q {
+
+        Node s;
+        Q next;
+
+        Q(Node s, Q next) {
+
+            this.s = s;
+            this.next = next;
         }
     }
 
@@ -103,7 +114,7 @@ class Struct {
                     Node n = Map_id.get(root);
                     n.y = 0;
                     n.x = power(n.id_l);
-                    izhod.printf("%d,%d,%d\n", n.v, n.x, n.y);
+                    //izhod.printf("%d,%d,%d\n", n.v, n.x, n.y);
 
                     dodeli_koordinate(n.id_l, izhod, 1);
                     dodeli_koordinate(n.id_r, izhod, 2);
@@ -118,7 +129,7 @@ class Struct {
 
                     m.y = parent.y + 1;
                     m.x = parent.x - power(r_child) - 1;
-                    izhod.printf("%d,%d,%d\n", m.v, m.x, m.y);
+                    //izhod.printf("%d,%d,%d\n", m.v, m.x, m.y);
 
                     dodeli_koordinate(m.id_l, izhod, 1);
                     dodeli_koordinate(m.id_r, izhod, 2);
@@ -132,7 +143,7 @@ class Struct {
 
                     b.y = paren.y + 1;
                     b.x = paren.x + power(l_child) + 1;
-                    izhod.printf("%d,%d,%d\n", b.v, b.x, b.y);
+                    //izhod.printf("%d,%d,%d\n", b.v, b.x, b.y);
 
                     dodeli_koordinate(b.id_l, izhod, 1);
                     dodeli_koordinate(b.id_r, izhod, 2);
@@ -153,6 +164,33 @@ class Struct {
             int r = n.id_r;
 
             return power(l) + 1 + power(r);
+        }
+    }
+
+    public void writer (PrintWriter izhod, int root) {
+
+        Q queue = new Q (Map_id.get(root), null);
+        last = queue;
+
+        while (queue != null) {
+
+            izhod.printf("%d,%d,%d\n", queue.s.v, queue.s.x, queue.s.y);
+            add_2_q(queue.s.id_l);
+            add_2_q(queue.s.id_r);
+            queue = queue.next;
+        }
+    }
+
+    public void add_2_q (int id){
+
+        if (id != -1) {
+
+            Node n = Map_id.get(id);
+
+            Q queue = new Q(n, null);
+
+            last.next = queue;
+            last = queue;
         }
     }
 }
@@ -181,7 +219,9 @@ public class Naloga7 {
             for (int i = 0; i < n; i++)
                 struct.vnesi(vhod.readLine());
 
-            struct.dodeli_koordinate(struct.uredi(), izhod, 0);
+            int root = struct.uredi();
+            struct.dodeli_koordinate(root, izhod, 0);
+            struct.writer(izhod, root);
 
             final long et = System.currentTimeMillis();
 
