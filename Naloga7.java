@@ -183,7 +183,8 @@ class Struct {
 
         while (queue != null) {
 
-            izhod.printf("%d,%d,%d\n", queue.s.v, queue.s.x, queue.s.y);
+            izhod.printf("%d,%d,%d", queue.s.v, queue.s.x, queue.s.y);
+            izhod.println();
             add_2_q(queue.s.id_l);
             add_2_q(queue.s.id_r);
             queue = queue.next;
