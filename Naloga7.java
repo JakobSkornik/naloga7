@@ -77,13 +77,13 @@ class Struct {
 
             Node n = Map_v.get(i);
 
-            if (n.id_l != -1) {
+            if (n != null && n.id_l != -1) {
 
                 Node m = Map_id.get(n.id_l);
                 m.id_p = n.id;
             }
 
-            if (n.id_r != -1) {
+            if (n != null && n.id_r != -1) {
 
                 Node b = Map_id.get(n.id_r);
                 b.id_p = n.id;
